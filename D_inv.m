@@ -99,6 +99,7 @@ end
 %p == 1 -> Hfw in the loop
 %p == 2 -> Hg in the loop
 
+
 if(p == 2)
     if((Vz0 >= cin) && (Vz0 <= cout))
         inD = 1;
@@ -112,13 +113,13 @@ end
 %======================
 if(p == 1)
     if(q ~= 0)
-       if((Vz0 <= cin) && (il*q <= 0))
+       if( (abs(Vz0-cin) <= err) && (il*q <= 0))
            inD = 1;
-       elseif((Vz0 >= cout) && (il*q >= 0))
+       elseif( (abs(Vz0-cout) <= err) && (il*q >= 0))
            inD = 1;
        end
     elseif (q == 0)
-        if(Vz0 <= cin)
+        if( (abs(Vz0-cin) <= err) && (q == 0))
             inD = 1;
         end   
     end
@@ -128,13 +129,13 @@ end
 %For the Hg Controller
 %======================
 if(p == 2)
-    if((Vz0 >= cin) || (Vz0 <= cout))
+    if((Vz0 >= cin) && (Vz0 <= cout))
         inD = 1;
     else
         inD = 0;
     end
 end
 
-p
+%p
 inD
 end

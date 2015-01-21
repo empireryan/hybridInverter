@@ -91,17 +91,12 @@ if(p == 1)
     if(q ~= -1)
         if( ((abs(Vz0-cout) <= err) && (il >= 0) && (~M1)) || (((abs(Vz0-cin) <= err)) && (il <= 0)) )
         qplus = -1;
-    elseif (q == 0)
-        if((M1) || (M2))
-            qplus = 1;
-        else
-            qplus = q;
         end
+    elseif ( ((M1) && (abs(il - mEpsilon) >= err) && (q == 1)) || ((M2) && (abs(il + mEpsilon) >= err) && (q == -1)) )
+            qplus = 0;
     elseif(q ~= 1)
-        if( ((abs(Vz0 - cout) <= err) && ((il <= 0) && (~M2)) || (((abs(Vz0 <= cin) <= err) && (il >= 0))))
+        if( ((abs(Vz0 - cout) <= err) && (il <= 0) && (~M2)) || (((abs(Vz0 - cin) <= err)) && (il >= 0)) )
             qplus = 1;
-        else
-            qplus = q;
         end
     else
         qplus = q;        
@@ -118,6 +113,7 @@ if(p == 2)
         pplus = p;
     end
 end
+
 
 xplus = [pplus;qplus;il;vc];
 end

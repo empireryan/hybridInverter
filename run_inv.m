@@ -71,7 +71,7 @@ JSPAN = [0,500];
 % rule for jumps
 % rule = 1 -> priority for jumps
 % rule = 2 -> priority for flows
-rule = 2;
+rule = 1;
 
 options = odeset('RelTol',1e-6,'MaxStep',1e-4);
 

@@ -13,9 +13,9 @@ global cmid
 global cin
 global cout
 
-global i;
-global h;
-global t;
+global i
+global h
+global t
 global Vz0
 global w
 global err
@@ -71,15 +71,20 @@ end
 %p == 1 -> Hfw in the loop
 %p == 2 -> Hg in the loop
 
-%Hfw Controller
+    %===============================
+    %Hs Controller - Hfw in the loop
+    %===============================
 if(p == 1)
     %if we're between the tracking bands, flow
     if((Vz0 >= cin) && (Vz0 <= cout))
         inCHS = 1;
+    %not in the tracking bands, report not-flowing
     else
         inCHS = 0;
     end
-%Hg Controller (Out of tracking bands)    
+    %===============================
+    %Hs Controller - Hg in the loop
+    %===============================
 else 
     if(Vz0 >= cout)        %if we're beyond Co
         inCHS = 1;
