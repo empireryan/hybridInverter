@@ -1,0 +1,106 @@
+% initial conditions
+x1_0 = 2;
+x2_0 = 1;
+x3_0 = -0.1;
+x4_0 = 0.02;
+x0 = [x1_0;x2_0;x3_0;x4_0];
+
+% simulate horizon
+TSPAN = [0,0.03];
+JSPAN = [0,35];
+
+% rule for jumps
+% rule = 1 -> priority for jumps
+% rule = 2 -> priority for flows
+rule = 1;
+
+options = odeset('RelTol',1e-6,'MaxStep',1e-4);
+
+% simulate
+[t,j,x] = HyEQsolver(@f_inv,@g_inv,@C_inv,@D_inv,x0,TSPAN,JSPAN,rule,options);
+
+% circuit parameters
+R = 0.6;
+L = 0.1;
+C = 0.04;
+Rload = 8;
+vdc = 5;
+
+% tracking band parameters
+a = 0.15;
+b = 0.0125;
+epsilon = 0.1;
+cmid = 1;
+cin = cmid - epsilon;
+cout = cmid + epsilon;
+
+% check initial value of trajectory function
+Vz0 = (x3_0/a)^2 + (x4_0/b)^2
+if (Vz0 <= cout) && (Vz0 >= cin)
+    fprintf('Trajectory is initialized inside of the tracking band.\n\n');
+else
+    fprintf('Trajectory is initialized outside of the tracking band.\n\n');
+end
+
+% test
+Guy = zeros(length(t),2);
+i = 1;
+while (i <= length(t))
+    Guy(i,1) = i;
+    Guy(i,2) = (x(i,3)/a)^2 + (x(i,4)/b)^2;
+    i = i + 1;
+end
+Guy;
+x(:,5) = Guy;
+
+% plot output waveforms
+figure(1)
+clf
+plotInverterWaveforms(t,j,x)
+
+% initial conditions with q = 0
+x1_0 = 2;
+x2_0 = 0;
+x3_0 = 0.1;
+x4_0 = 0.009;
+xtwo0 = [x1_0;x2_0;x3_0;x4_0];
+
+%simulate
+%[t,j,xtwo] = HyEQsolver(@f_inv,@g_inv,@C_inv,@D_inv,xtwo0,TSPAN,JSPAN,rule,options);
+
+% initial conditions with q = -1
+x1_0 = 2;
+x2_0 = -1;
+x3_0 = 0.1;
+x4_0 = 0.009;
+xthree0 = [x1_0;x2_0;x3_0;x4_0];
+
+% simulate
+%[t,j,xthree] = HyEQsolver(@f_inv,@g_inv,@C_inv,@D_inv,xthree0,TSPAN,JSPAN,rule,options);
+
+% ellipse tracking band
+te = -pi:0.01:pi;
+xe = a*cos(te);
+ye = b*sin(te);
+
+% ellipse outer band
+aeo = sqrt(cout) * a;
+beo = sqrt(cout) * b;
+xeo = aeo*cos(te);
+yeo = beo*sin(te);
+
+% ellipse inner band
+aei = sqrt(cin) * a;
+bei = sqrt(cin) * b;
+xei = aei*cos(te);
+yei = bei*sin(te);
+
+% plot output trajectories, reference trajectory, and tracking band
+figure(2)
+clf
+subplot(1,1,1)
+plot(x(:,3),x(:,4),'g',xe,ye,'k',xeo,yeo,'--b',xei,yei,'--b')%,xtwo(:,3),xtwo(:,4),'c',xthree(:,3),xthree(:,4),'r')
+xlabel('Inductor Current')
+ylabel('Capacitor/Load Voltage')
+grid on
+title('Closed-Loop System Trajectories')
