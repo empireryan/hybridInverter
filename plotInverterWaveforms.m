@@ -7,6 +7,7 @@
 
 function plotInverterWaveforms(t,j,x)
 
+%{
 % plot continuous evolution of inductor current
 subplot(3,2,1)
 plotflows(t,j,x(:,3))
@@ -43,6 +44,8 @@ grid on
 ylabel('q')
 title('Continuous Evolution of Switching State q')
 
+%}
+
 % calculate minimum time between state transitions
 tj = zeros((max(j) + 1),3);
 tj(1,:) = [0,0,1];
@@ -65,6 +68,7 @@ fsmin = 1 / min(tj(:,3));
 
 % Print minimum time between switching events
 outputString = sprintf('Minimum period between switching events is %d seconds   ==>   f_{s,min} = %d Hz', min(tj(:,3)),fsmin);
+outputString
 text(0,-3.5,outputString);
 
 end

@@ -15,9 +15,9 @@ global cout
 
 global i;
 global h;
-global t;
 global Vz0
 global w
+global err
 
 
 % state
@@ -34,7 +34,7 @@ vcdot = (1/C)*il - (1/(Rload*C))*vc;
 
 z = [il;vc];
 A = [-R/L -1/L;1/C 0];
-%B = [1/(L); 0];
+B = [1/(L); 0];
 %B = [0; 1/L];
 
 
@@ -42,15 +42,12 @@ if (q == -1)
     B = [-1/L; 0];
 elseif (q == 0)
     B = [0; 0];
-else (q == 1)
+else
+    %(q == 1)
     B = [1/L; 0];
 end
 
 
-u = 170;
+u = vdc;
 xdot = [pdot; qdot; (A*z) + (B*u)];
-
-%zz = (il/a)^2 + (vc/b)^2
-%z2dot = (1/C)*z1;
-
-%xdot = [pdot;qdot;ildot;vcdot];
+end

@@ -15,7 +15,6 @@ global cout
 
 global i;
 global h;
-global t;
 global Vz0
 global w
 global err
@@ -31,21 +30,15 @@ vc = x(4); % capacintor voltage
 pplus = p;
 qplus = q;
 
-% tracking band parameters
-%{
-epsilon = 0.1;
-cmid = 1;
-cinn = cmid - epsilon;
-coutut = cmid + epsilon;
-
-% trajectory function
-Vz = (z1/a)^2 + (z2/b)^2;
-%}
-
 Vz0 = (il/a)^2 + (vc/b)^2;
-% error band and parameter
 
-mEpsilon = 10;
+%TODO: This block also appears in D_inv - make these global so you can
+%calculate once and change parameters in run_inv!
+
+%======================
+%Error Band and Parameter
+%======================
+mEpsilon = 150;
 if ((abs(Vz0 - cout) < err) && ((il >= 0) && (il <= mEpsilon)) && (vc <= 0))
     M1 = 1;
 else

@@ -13,56 +13,27 @@ global cmid
 global cin
 global cout
 
-global i
-global h
-global t
+global i;
+global h;
 global Vz0
 global w
 global err
 
 
-% state
+%======================
+%       State
+%======================
 p = x(1); %coutntroller selection
-q = x(2); % switch position
+q = x(2); %switch position
 il = x(3); % inductor current
-vc = x(4); % capacintor voltage
+vc = x(4); % capacitor voltage
 
-% tracking band parameters
-%{
-epsilon = 0.1;
-cmid = 1;
-cinn = cmid - epsilon;
-coutut = cmid + epsilon;
-
-% trajectory function
-Vz = (z1/a)^2 + (z2/b)^2;
-%}
-
+%==================================================================
+%                   Tracking Band Parameters
+%Use the current il vc solution to determine its position and phase
+%==================================================================
 Vz0 = (il/a)^2 + (vc/b)^2;
-
-
-%{
-% Hs is in the loop
-if ((Vz0 <= coutut) && (Vz0 >= cinn) && (p == 1))
-    Cfw = 1;
-else
-    Cfw = 0;
-end
-
-% Hg is in the loop
-if (((Vz0 >= coutut) || (Vz0 <= cinn)) && (p == 2))
-    Cg = 1;
-else
-    Cg = 0;
-end
-
-%closed-loop system flow set
-if (Cfw || Cg)
-    v = 1; % report flow
-else
-    v = 0; % do not report flow
-end
-%}
+phase = atan((vc/b)^2/(il/a)^2);
 
 %======================
 %For the Hs Controller
