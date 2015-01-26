@@ -22,7 +22,7 @@ global err
 
 
 % state
-p = x(1); %coutntroller selection
+p = x(1); %controller selection
 q = x(2); % switch position
 il = x(3); % inductor current
 vc = x(4); % capacintor voltage

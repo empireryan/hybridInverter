@@ -20,19 +20,23 @@ global w
 global err
 
 
-% state
+%=========================
+%State
+%=========================
 p = x(1); %controller selection
 q = x(2); % switch position
 il = x(3); % inductor current
 vc = x(4); % capacitor voltage
 
 
-% trajectory function
+%=========================
+%Trajectory Function
+%=========================
 Vz0 = (il/a)^2 + (vc/b)^2;
 
-%======================
-%Error Band and Parameter
-%======================
+%=========================
+%Error Band and Parameters
+%=========================
 mEpsilon = 150;
 if ((abs(Vz0 - cout) < err) && ((il >= 0) && (il <= mEpsilon)) && (vc <= 0))
     M1 = 1;
@@ -44,6 +48,11 @@ if ((abs(Vz0 - cout) < err) && ((il >= -mEpsilon) && (il <= 0)) && (vc >= 0))
 else
     M2 = 0;
 end
+
+
+%@TODO: make this work like a sieve, as in the flow set 'C'. 
+%Set each controller to trigger its own 'local' inD flag, and then check
+%for any of these flags at the end. 
 
 %======================
 %For the Hs Controller
