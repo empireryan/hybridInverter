@@ -7,7 +7,7 @@
 
 function plotInverterWaveforms(t,j,x)
 
-%{
+
 % plot continuous evolution of inductor current
 subplot(3,2,1)
 plotflows(t,j,x(:,3))
@@ -44,7 +44,6 @@ grid on
 ylabel('q')
 title('Continuous Evolution of Switching State q')
 
-%}
 
 % calculate minimum time between state transitions
 tj = zeros((max(j) + 1),3);

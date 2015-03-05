@@ -1,7 +1,10 @@
 function inD = D(x)
 
 global R
+global Rf
+global R2
 global L
+global Lg
 global C
 global vdc
 global Rload
@@ -19,15 +22,13 @@ global Vz0
 global w
 global err
 
-
 %=========================
 %State
 %=========================
-p = x(1); %controller selection
-q = x(2); % switch position
+p = x(1); %coutntroller selection
+q = x(2); %switch position
 il = x(3); % inductor current
 vc = x(4); % capacitor voltage
-
 
 %=========================
 %Trajectory Function
@@ -37,7 +38,7 @@ Vz0 = (il/a)^2 + (vc/b)^2;
 %=========================
 %Error Band and Parameters
 %=========================
-mEpsilon = 150;
+mEpsilon = .5;
 if ((abs(Vz0 - cout) < err) && ((il >= 0) && (il <= mEpsilon)) && (vc <= 0))
     M1 = 1;
 else
@@ -73,6 +74,22 @@ end
 %======================
 %For the Hfw Controller
 %======================
+%{
+if(p == 1)
+    if(q ~= 0)
+       if( (abs(Vz0-cin) <= err) && (il*q <= 0))
+           inD = 1;
+       elseif( (abs(Vz0-cout) <= err) && (il*q >= 0))
+           inD = 1;
+       end
+    elseif (q == 0)
+        if( (abs(Vz0-cin) <= err) && (q == 0))
+            inD = 1;
+        end   
+    end
+end
+%}
+
 if(p == 1)
     if(q ~= 0)
        if( (abs(Vz0-cin) <= err) && (il*q <= 0))

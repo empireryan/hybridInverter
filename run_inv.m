@@ -1,7 +1,10 @@
 close all; clear all; clc;
 
 global R
+global Rf
+global R2
 global L
+global Lg
 global C
 global vdc
 global Rload
@@ -20,49 +23,54 @@ global w
 global err
 
 % circuit parameters
-R = 0.6;
-L = 0.01;
-C = 0.004;
-Rload = 8;
-vdc = 200;
-
-R = 0.2;
-L = 2*10^-4;
-C = 3*10^-1;
-Rload = 1000000;
-vdc = 520;
-
+R = .9;
+Rf = .55;
+R2 = R;
+L = 120*10^-3;
+Lg = .45*10^-6;
+C = 10*10^(-6);
+Rload = 10;
+vdc = 180;
 
 % tracking band parameters
-freq = 60;
-w = 2*pi*freq;
-a = 1/(sqrt(R^2 + (L*w - 1/(C*w))^2 ));
-b = 1/(C*w*sqrt(R^2 + (L*w - 1/(C*w))^2 ));
+f = 60;
+w = 2*pi*f;
+ampVc = 120*sqrt(2);
+ampIl = 1*sqrt(2);
+
+C = ampIl/(ampVc*w);
+L = 1/(C*w^2);
+
+a = ampVc;
+b = a/(C*w);
+
+epsilon = 0.1;
+err = 1e-8;
+
+A = ampVc*2;
+theta = 0;
+thetaTilda = -atan((L*C*w^2-1)/(R*C*w));
+ilNot = A/(w*C)*((sin(theta+thetaTilda))/(sqrt(R^2 + (L*w-1/(C*w)))));
+vcNot = A/(w*C)*((sin(theta+thetaTilda-pi/2))/(sqrt(R^2 + (L*w-1/(C*w)))));
 
 
-%LCw^2 > 1
+cmid = (0/a)^2 + (a/b)^2;
+cmid = (a/b)^2;
+
+cin = (1-epsilon)*cmid;
+cout = (1+epsilon)*cmid;
+
+
+%stateSpace();
+%cmid = ((h(75000, 1)/a)^2 + (h(75000, 2)/b)^2)
+%cin = (1-epsilon)*((h(75000, 1)/a)^2 + (h(75000, 2)/b)^2)
+%cout = (1+epsilon)*((h(75000, 1)/a)^2 + (h(75000, 2)/b)^2)
+
+% LCw^2 > 1
+% Vdc > b*sqrt(co)
 assert(L*C*w^2 > 1);
-%Vdc > b*sqrt(co)
-%assert(Vdc > b*sqrt(co));
-
-stateSpace();
-figure(1)
-%hold on
-%plot(t, y);
-%plot(h(10000:20000)/a,i(10000:20000)/b, 'm');
-
-%plot(h(50000:51000, 1),h(50000:51000, 2), '--r');
-plot(h(50000:51000, 2),h(50000:51000, 1), '--r');
-
-
-%Vz0 = ((h(50000)/a)^2 + (i(50000)/b)^2)
-
-epsilon = 0.05;
-cmid = ((h(50000, 1)/a)^2 + (h(50000, 2)/b)^2)
-cin = (1-epsilon)*((h(50000, 1)/a)^2 + (h(50000, 2)/b)^2)
-cout = (1+epsilon)*((h(50000, 1)/a)^2 + (h(50000, 2)/b)^2)
-err = 1e-2;
-
+assert(b == a/(C*w));
+assert(vdc > b*sqrt(cout));
 
 % initial conditions
 p = 2;
@@ -72,7 +80,7 @@ vc = 0;
 x0 = [p;q;il;vc];
 
 % simulate horizon
-TSPAN = [0,.50];
+TSPAN = [0,.5];
 JSPAN = [0,10000];
 
 % rule for jumps
@@ -80,9 +88,8 @@ JSPAN = [0,10000];
 % rule = 2 -> priority for flows
 rule = 1;
 
-options = odeset('RelTol',1e-6,'MaxStep',1e-5);
+options = odeset('RelTol',1e-6,'MaxStep',1e-4);
 
-t = 0;
 % simulate
 [t,j,x] = HyEQsolver(@f_inv,@g_inv,@C_inv,@D_inv,x0,TSPAN,JSPAN,rule,options);
 
@@ -97,7 +104,7 @@ end
 % plot output waveforms
 %figure(1)
 %clf
-plotInverterWaveforms(t,j,x)
+%plotInverterWaveforms(t,j,x)
 
 % ellipse tracking band
 te = -pi:1e-6:pi;
